@@ -1,5 +1,5 @@
 # Use selenium/standalone-chrome as the base image (comes with Chrome and Selenium preinstalled)
-FROM selenium/standalone-chrome:latest
+FROM selenium/standalone-chromium:latest
 
 # Set working directory
 WORKDIR /app
@@ -22,8 +22,9 @@ ENV NAUKRI_LOGIN_URL="https://www.naukri.com/nlogin/login"
 ENV NAUKRI_PROFILE_URL="https://www.naukri.com/mnjuser/profile"
 
 # Keep container running for manual execution
-CMD ["tail", "-f", "/dev/null"]
+# CMD ["tail", "-f", "/dev/null"]
 
+CMD [ "python", "naukri.py"]
 
 ## Working Commands
 # docker run -it -v $(pwd)/resume:/app/resume naukri-automation

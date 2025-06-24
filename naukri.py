@@ -24,7 +24,7 @@ NAUKRI_PROFILE_URL = os.environ.get("NAUKRI_PROFILE_URL", "https://www.naukri.co
 originalResumePath = ORIGINAL_RESUME_PATH
 username = USERNAME
 password = PASSWORD
-headless = False
+headless = True
 NaukriURL = NAUKRI_LOGIN_URL
 
 logging.basicConfig(
@@ -101,13 +101,19 @@ def LoadNaukri(headless_mode):
     # Add user agent to appear more human
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
+    # Required for Docker environment
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
     if headless_mode:
-        options.add_argument("--headless")
-        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--headless=new")  # Use new headless mode for better compatibility
         options.add_argument("--window-size=1920,1080")
 
     try:
-        driver = webdriver.Chrome(options=options, service=ChromeService())
+        # Explicitly specify ChromeDriver path in the container
+        service = ChromeService(executable_path="/usr/bin/chromedriver")
+        driver = webdriver.Chrome(options=options, service=service)
+        
         # Execute script to hide webdriver property
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
